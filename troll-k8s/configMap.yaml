@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: troll-conf
+data:
+  port: ":8085"
+
+  # Define content of v2_api.yaml file
+  v2_api: |
+    ---
+    name: Inventory
+    description: Our company inventory includes employees and equipment
+    version: 2022-02-09
+    endpoints:
+    - path: /employee
+      method: GET
+      code: 200
+      response: "List of our employee..."   

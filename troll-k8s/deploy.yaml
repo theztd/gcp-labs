@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: troll-deployment
+  labels:
+    app: troll
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: troll
+  template:
+    metadata:
+      labels:
+        app: troll
+    spec:
+      containers:
+      - name: troll
+        image: ghcr.io/theztd/troll:cf53a84ea6c9f357c8e41522cf78fe87ff44957e
+        args:
+        - -v2-path
+        - conf/test_v2_api.yaml
+        - -name
+        - "Kubi Troll"
+        env:
+          - name: PORT_TEST
+            valueFrom:
+              configMapKeyRef:
+                name: troll-conf
+                key: port
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: troll-conf
+          mountPath: "/opt/troll/conf"
+          readOnly: true
+      volumes:
+      - name: troll-conf
+        configMap:
+          name: troll-conf
+          items:
+          - key: v2_api
+            path: "test_v2_api.yaml"
