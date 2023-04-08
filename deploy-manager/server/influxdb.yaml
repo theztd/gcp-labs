@@ -1,0 +1,39 @@
+# Deploj instance a instalace influxdb
+
+resources:
+- name: influxdb-1
+  type: compute.v1.instance
+  properties:
+    zone: us-central1-a
+    machineType: zones/us-central1-a/machineTypes/e2-micro
+    labels:
+      author: marek
+      task: i3456782
+    tags:
+      items:
+      - http-server
+      - influxdb
+      - deployment-manager
+    metadata:
+      items:
+      - key: startup-script
+        value: |
+          mkdir /root/.ssh
+          echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKteda/NEcPukzGaT5gvwrUNOX+bTO1HBYRIvlyWVAX8 marek@2021" >> /root/.ssh/authorized_keys
+          chmod 700 /root/.ssh
+          chmod 600 /root/.ssh/authorized_keys
+
+          apt update
+          apt install -y vim git htop influxdb
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      labels:
+        author: marek
+        task: i3456782
+      initializeParams:
+        sourceImage: projects/debian-cloud/global/images/family/debian-11
+    networkInterfaces:
+    - network: global/networks/default
